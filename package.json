@@ -1,0 +1,34 @@
+{
+  "name": "sails-logi2loki",
+  "version": "1.0.0",
+  "description": "Export logs to loki in SailsJS",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "42pub, xziy",
+  "license": "MIT",
+  "sails": {
+    "isHook": true,
+    "hookName": "logi2loki"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^8.0.2",
+    "@types/node": "^10.17.60",
+    "@webresto/core": "^0.9.5",
+    "browserify": "^17.0.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "faker": "^4.1.0",
+    "mocha": "^6.2.2",
+    "ts-loader": "^5.3.0",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typed-sails": "git+https://github.com/42Sails/typed-sails.git",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "winston": "^3.10.0",
+    "winston-loki": "^6.0.7"
+  }
+}
