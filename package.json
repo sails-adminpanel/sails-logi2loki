@@ -1,6 +1,6 @@
 {
   "name": "sails-logi2loki",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Export logs to loki in SailsJS",
   "main": "index.js",
   "scripts": {},
@@ -11,6 +11,13 @@
     "isHook": true,
     "hookName": "logi2loki"
   },
+  "bugs": {
+		"url": "https://github.com/sails-adminpanel/sails-logi2loki/issues"
+	},	
+  "repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/sails-adminpanel/sails-logi2loki.git"
+	},
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^8.0.2",
