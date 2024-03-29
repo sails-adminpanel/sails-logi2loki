@@ -73,6 +73,7 @@ const _loki = new LokiTransport({
   host: process.env.LOKI_CONFIG_HOST
 });
 
+console.debug(`new loki instance initialized`)
 
 const all = format((info) => {
   const splat = info[SPLAT] || [];
