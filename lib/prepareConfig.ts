@@ -1,4 +1,4 @@
-const { config, createLogger, format, transports } = require('winston');
+const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, colorize, label, printf, align } = format;
 const { SPLAT } = require('triple-beam');
 const { isObject } = require('lodash');
@@ -45,6 +45,7 @@ try {
 const defaultAppName = process.env.APP_NAME ?? process.env.PROJECT_NAME ?? `${hostname}_${basename}_${last7Chars}`;
 process.env.LOKI_LABEL_APP_NAME = process.env.LOKI_LABEL_APP_NAME || defaultAppName;
 
+
 const env_labels = Object.entries(process.env)
   .filter(([key]) => key.startsWith("LOKI_LABEL_"))
   .map(([key, value]) => formatLabel(key.substring(11), value));
@@ -58,22 +59,29 @@ const env_labels = Object.entries(process.env)
  */
 
 const labels = {
-    NODE_ENV: process.env.NODE_ENV,
-    ...Object.assign({}, ...env_labels) // Merge all label objects into one
-  }
+  NODE_ENV: process.env.NODE_ENV,
+  ...Object.assign({}, ...env_labels) // Merge all label objects into one
+}
+
+const headers = {}
+
+if(process.env.LOKI_ORG_ID) {
+  headers['X-Scope-OrgID'] = process.env.LOKI_ORG_ID
+}
 
 const _loki = new LokiTransport({
   batching: true,
   interval: 5,
   labels: labels,
-  ...process.env.LOKI_CONFIG_BASIC_AUTH && {basicAuth:  process.env.LOKI_CONFIG_BASIC_AUTH},
+  ...process.env.LOKI_CONFIG_BASIC_AUTH && { basicAuth: process.env.LOKI_CONFIG_BASIC_AUTH },
   // json: process.env.LOKI_CONFIG_JSON ? true : false,
   // replaceTimestamp: true,
   // format: process.env.LOKI_CONFIG_JSON ? format.json() : undefined,
-  host: process.env.LOKI_CONFIG_HOST
+  host: process.env.LOKI_CONFIG_HOST,
+  ...Object.keys(headers).length > 0 && { headers: headers }
 });
 
-console.debug(`new loki instance initialized`)
+console.debug(`new loki instance initialize`)
 
 const all = format((info) => {
   const splat = info[SPLAT] || [];
@@ -89,9 +97,9 @@ export const customLogger = createLogger({
   // format: format.json(),
   // levels: config.syslog.levels,
   transports: [
-  _loki,
-    new transports.Console({    
-     format: combine(
+    _loki,
+    new transports.Console({
+      format: combine(
         all(),
         label({ label: "version" }),
         timestamp(),
