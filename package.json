@@ -1,6 +1,6 @@
 {
   "name": "sails-logi2loki",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Export logs to loki in SailsJS",
   "main": "index.js",
   "scripts": {},
