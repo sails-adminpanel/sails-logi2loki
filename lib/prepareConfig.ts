@@ -8,6 +8,7 @@ const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
+import Transport = require('winston-transport');
 
 function formatObject(param) {
   return isObject(param) ? JSON.stringify(param) : param;
@@ -71,30 +72,35 @@ const all = format((info) => {
 });
 
 // Custom transport for webhook error reporting
-class HttpTransport extends transports.Stream {
+class HttpTransport extends Transport {
   constructor(opts) {
     super(opts);
     this.webhookUrl = opts.webhookUrl;
+    this.name = 'HttpTransport';
   }
 
   log(info, callback) {
-    setImmediate(() => this.emit('logged', info));
-    
-    if (info.level === 'error' && this.webhookUrl) {
+    if (info.level === 'error') {
       axios.post(this.webhookUrl, {
+        text: `Error: ${info.message}`,
         level: info.level,
-        message: info.message,
-        timestamp: new Date().toISOString(),
+        timestamp: info.timestamp,
         labels,
-        meta: info.meta || {},
-      }).catch(err => {
-        console.error('Log sending error to Webhook:', err.message);
-      });
+        stack: info.stack,
+        ...info.metadata
+      })
+        .then(() => {
+          callback(null, true);
+        })
+        .catch((error) => {
+          callback(error);
+        });
+    } else {
+      callback(null, true);
     }
-
-    callback();
   }
 }
+
 
 const transportsList = [
   _loki,
